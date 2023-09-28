@@ -1,10 +1,10 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin')
-const deps = require('./package.json').dependencies
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
+const deps = require('./package.json').dependencies;
 module.exports = {
 	mode: 'development',
 	devServer: {
-		port: 4005
+		port: 4005,
 	},
 	module: {
 		rules: [
@@ -13,14 +13,14 @@ module.exports = {
 				exclude: /node_modules/,
 				loader: 'babel-loader',
 				options: {
-					presets: ['@babel/preset-env', '@babel/preset-react']
-				}
+					presets: ['@babel/preset-env', '@babel/preset-react'],
+				},
 			},
 			{
-				test: /\.css$/i,
-				use: ['style-loader', 'css-loader']
-			}
-		]
+				test: /\.css|scss$/i,
+				use: ['style-loader', 'css-loader', 'sass-loader'],
+			},
+		],
 	},
 	plugins: [
 		new ModuleFederationPlugin({
@@ -28,7 +28,8 @@ module.exports = {
 			filename: 'remoteEntry.js',
 			exposes: {
 				'./App': './src/App',
-				'./Grid': './src/components/Grid'
+				'./Grid': './src/components/Grid',
+				'./AUM': './src/components/AUM',
 			},
 			shared: [
 				{
@@ -36,13 +37,13 @@ module.exports = {
 					react: { requiredVersion: deps.react, singleton: true },
 					'react-dom': {
 						requiredVersion: deps['react-dom'],
-						singleton: true
-					}
-				}
-			]
+						singleton: true,
+					},
+				},
+			],
 		}),
 		new HtmlWebpackPlugin({
-			template: './public/index.html'
-		})
-	]
-}
+			template: './public/index.html',
+		}),
+	],
+};
